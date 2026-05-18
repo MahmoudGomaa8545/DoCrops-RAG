@@ -18,7 +18,6 @@ app = FastAPI(title="DoCrops Production RAG API", description="Stable Serverless
 # 1. Initialize and configure the Hugging Face Inference Client
 HF_TOKEN = os.getenv("HF_TOKEN")
 
-# تغيير الموديل إلى Qwen 2.5 أو Llama 3 لضمان التوافق الفوري والمجاني على السيرفرات
 MODEL_ID = "Qwen/Qwen2.5-7B-Instruct"
 
 if HF_TOKEN:

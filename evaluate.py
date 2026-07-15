@@ -7,8 +7,8 @@ from ragas.metrics import _faithfulness as faithfulness, _context_precision as c
 from langchain_openai import ChatOpenAI
 
 # CONFIGURATION
-OPENAI_API_KEY = "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"
-HF_TOKEN = "your-hf-token-here"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "your-openai-api-key-here")
+HF_TOKEN = os.getenv("HF_TOKEN", "your-hf-token-here")
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 os.environ["HF_TOKEN"] = HF_TOKEN
 

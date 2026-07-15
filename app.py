@@ -58,6 +58,38 @@ def search_faiss(query, k=3):
     distances, indices = index.search(query_vector, k)
     return [metadata[idx] for idx in indices[0] if idx != -1]
 
+
+def _extract_tokens_used(response, answer_text):
+    def estimate_tokens(text):
+        return max(1, len(text.split()))
+
+    if response is None:
+        return estimate_tokens(answer_text)
+
+    usage = None
+    if hasattr(response, "token_usage"):
+        usage = response.token_usage
+    elif hasattr(response, "usage"):
+        usage = response.usage
+    elif isinstance(response, dict):
+        usage = response.get("usage")
+
+    if usage is not None:
+        if isinstance(usage, dict):
+            total = usage.get("total_tokens")
+            if total is None:
+                prompt_tokens = usage.get("prompt_tokens", 0)
+                completion_tokens = usage.get("completion_tokens", 0)
+                total = prompt_tokens + completion_tokens
+            if isinstance(total, int):
+                return total
+        elif hasattr(usage, "total_tokens"):
+            return int(usage.total_tokens)
+        elif hasattr(usage, "prompt_tokens") and hasattr(usage, "completion_tokens"):
+            return int(usage.prompt_tokens) + int(usage.completion_tokens)
+
+    return estimate_tokens(answer_text)
+
 # English Gemini-Inspired Interface
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -272,7 +304,7 @@ def ask_bot(request: QueryRequest):
                     max_tokens=80,
                     temperature=0.1
                 )
-                if rewrite_response and rewrite_response.choices:
+                if rewrite_response and getattr(rewrite_response, 'choices', None):
                     search_query = rewrite_response.choices[0].message.content.strip()
                 else:
                     search_query = question
@@ -313,9 +345,11 @@ Formal Scientific Response:
         )
         
         ai_answer = response.choices[0].message.content.strip()
+        tokens_used = _extract_tokens_used(response, ai_answer)
         
         return {
-            "answer": ai_answer
+            "answer": ai_answer,
+            "tokens_used": tokens_used
         }
 
     except Exception as e:

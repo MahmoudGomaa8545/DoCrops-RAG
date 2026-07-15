@@ -5,3 +5,8 @@ faiss-cpu
 google-generativeai
 pydantic
 numpy
+ragas
+pandas
+datasets
+langchain-openai
+python-dotenv

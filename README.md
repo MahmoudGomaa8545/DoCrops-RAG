@@ -1,6 +1,8 @@
 # DoCrops AI Intelligence Platform 🌾🤖
 
-Production-grade, professional Context-Aware Retrieval-Augmented Generation (RAG) system specialized in Plant Pathology and Crop Disease Diagnosis. Powered by **FastAPI**, **FAISS Vector Database**, and **Hugging Face Serverless Inference API**.
+Production-grade, professional Context-Aware Retrieval-Augmented Generation (RAG) system specialized in Plant Pathology and Crop Disease Diagnosis. Powered by **FastAPI**, **FAISS Vector Database**, and a **small local LLM (Qwen2.5-1.5B via llama.cpp) running fully inside the Space - no external API**.
+
+**Live demo:** https://huggingface.co/spaces/MahmoudGomaa8545/docrops-rag-api
 
 ---
 
@@ -10,6 +12,7 @@ Production-grade, professional Context-Aware Retrieval-Augmented Generation (RAG
 * **Semantic Text Search:** Utilizes `intfloat/multilingual-e5-base` embeddings to match user queries with textbook-level botanical data stored in a dense FAISS index.
 * **Pure Academic Outputs:** Designed to return clean, high-quality, professional scientific answers (supporting both Arabic and English) without raw text citation fluff or metadata clutter.
 * **Minimalist Responsive UI:** Features a dynamic, modern, single-page chat view that intelligently auto-adapts text alignment (`RTL` / `LTR`) based on the input language.
+* **Zero External Dependencies at Runtime:** The LLM runs locally inside the deployment, so the demo works with no API keys and no paid services.
 
 ---
 
@@ -18,7 +21,7 @@ Production-grade, professional Context-Aware Retrieval-Augmented Generation (RAG
 * **Backend Framework:** FastAPI (Uvicorn ASGI Server)
 * **Vector Indexing:** FAISS (Facebook AI Similarity Search)
 * **Embedding Model:** `intfloat/multilingual-e5-base`
-* **LLM Engine:** Serverless Inference Client via Hugging Face (`Qwen/Qwen2.5-7B-Instruct`)
+* **LLM Engine:** Local Qwen2.5-1.5B-Instruct (GGUF) via llama.cpp - no external API
 * **Frontend:** HTML5, CSS3 (Dynamic Bi-directional Layout), JavaScript (Marked.js for Markdown parsing)
 
 ---
@@ -33,8 +36,8 @@ Since this repository tracks large vector index binaries via **Git LFS**, please
 git lfs install
 
 # Clone the repository directly
-git clone https://huggingface.co/spaces/MahmoudGomaa8545/docrops-rag-api
-cd docrops-rag-api
+git clone https://github.com/MahmoudGomaa8545/DoCrops-RAG.git
+cd DoCrops-RAG
 ```
 
 ### 2. Install Dependencies
@@ -43,23 +46,11 @@ Make sure you have Python 3.9+ installed, then run:
 pip install -r requirements.txt
 ```
 
-### 3. Environment Variables
-Configure your Hugging Face User Access Token to authorize the Inference Client:
-
-* **On Windows (CMD):**
-  ```cmd
-  set HF_TOKEN=your_huggingface_token_here
-  ```
-* **On Linux/macOS:**
-  ```bash
-  export HF_TOKEN="your_huggingface_token_here"
-  ```
-
-### 4. Run the Server Locally
+### 3. Run the Server Locally
 ```bash
 uvicorn app:app --reload --host 127.0.0.1 --port 8000
 ```
-Open your browser and navigate to `http://127.0.0.1:8000` to interact with the system.
+On first run the app downloads the local LLM (~1.1 GB) automatically, then open your browser and navigate to `http://127.0.0.1:8000` to interact with the system.
 
 ---
 
@@ -112,4 +103,4 @@ Content-Type: application/json
 ---
 
 ## 🌐 Deployment Note
-This system is optimized to run inside Hugging Face Spaces Docker or Python environments. Make sure `HF_TOKEN` is securely bound under **Repository Secrets** in your Space Settings pane.
+This system is optimized to run inside Hugging Face Spaces Docker or Python environments, with the LLM and embeddings running locally - no secrets or tokens required.
